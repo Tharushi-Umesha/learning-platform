@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@layer base {
+    body {
+        @apply bg-secondary-dark text-gray-900;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors duration-200;
+    }
+
+    .btn-secondary {
+        @apply bg-accent text-white px-6 py-2 rounded-lg hover:bg-accent-dark transition-colors duration-200;
+    }
+
+    .input-field {
+        @apply w-full px-4 py-2 border border-accent-light rounded-lg focus:outline-none focus:ring-2 focus:ring-primary;
+    }
+
+    .card {
+        @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200;
+    }
+}
+
+@theme {
+    --color-primary: #7c3aed;
+    --color-primary-light: #a78bfa;
+    --color-primary-dark: #5b21b6;
+
+    --color-secondary: #ffffff;
+    --color-secondary-dark: #f9fafb;
+
+    --color-accent: #9ca3af;
+    --color-accent-light: #d1d5db;
+    --color-accent-dark: #6b7280;
+}
