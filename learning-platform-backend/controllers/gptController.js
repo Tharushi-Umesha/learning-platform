@@ -1,7 +1,7 @@
 const Course = require('../models/Course');
 const { getCourseRecommendations } = require('../utils/gptService');
 
-// Get course recommendations using GPT
+
 const getRecommendations = async (req, res) => {
     try {
         const { prompt } = req.body;
@@ -10,7 +10,7 @@ const getRecommendations = async (req, res) => {
             return res.status(400).json({ message: 'Please provide a prompt' });
         }
 
-        // Get all available courses
+
         const courses = await Course.find({ isPublished: true })
             .populate('instructor', 'username fullName')
             .select('title description category level duration');
@@ -22,7 +22,7 @@ const getRecommendations = async (req, res) => {
             });
         }
 
-        // Get GPT recommendations
+
         const gptResponse = await getCourseRecommendations(prompt, courses);
 
         res.status(200).json({
@@ -55,7 +55,7 @@ const getRecommendations = async (req, res) => {
     }
 };
 
-// Simple chat with GPT about courses
+
 const chatWithGPT = async (req, res) => {
     try {
         const { message } = req.body;

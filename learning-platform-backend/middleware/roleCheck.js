@@ -1,4 +1,3 @@
-// Middleware to check if user has required role
 const checkRole = (...roles) => {
     return (req, res, next) => {
         if (!req.user) {
@@ -17,7 +16,7 @@ const checkRole = (...roles) => {
     };
 };
 
-// Specific role checkers
+
 const isInstructor = checkRole('instructor');
 const isStudent = checkRole('student');
 const isStudentOrInstructor = checkRole('student', 'instructor');

@@ -1,18 +1,18 @@
 const Enrollment = require('../models/Enrollment');
 const Course = require('../models/Course');
 
-// Enroll in a course (Student only)
+
 const enrollCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
 
-    // Check if course exists
+
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
 
-    // Check if student is already enrolled
+
     const existingEnrollment = await Enrollment.findOne({
       student: req.userId,
       course: courseId
@@ -22,7 +22,7 @@ const enrollCourse = async (req, res) => {
       return res.status(400).json({ message: 'You are already enrolled in this course' });
     }
 
-    // Create enrollment
+
     const enrollment = new Enrollment({
       student: req.userId,
       course: courseId
@@ -30,7 +30,7 @@ const enrollCourse = async (req, res) => {
 
     await enrollment.save();
 
-    // Add student to course's enrolledStudents array
+
     course.enrolledStudents.push(req.userId);
     await course.save();
 
@@ -47,7 +47,7 @@ const enrollCourse = async (req, res) => {
   }
 };
 
-// Get all enrollments for current student
+
 const getMyEnrollments = async (req, res) => {
   try {
     const enrollments = await Enrollment.find({ student: req.userId })
@@ -67,7 +67,7 @@ const getMyEnrollments = async (req, res) => {
   }
 };
 
-// Get single enrollment details
+
 const getEnrollmentById = async (req, res) => {
   try {
     const enrollment = await Enrollment.findById(req.params.id)
@@ -78,7 +78,7 @@ const getEnrollmentById = async (req, res) => {
       return res.status(404).json({ message: 'Enrollment not found' });
     }
 
-    // Check if the enrollment belongs to the current user
+
     if (enrollment.student._id.toString() !== req.userId) {
       return res.status(403).json({ message: 'Access denied' });
     }
@@ -90,7 +90,7 @@ const getEnrollmentById = async (req, res) => {
   }
 };
 
-// Update enrollment progress
+
 const updateProgress = async (req, res) => {
   try {
     const { progress } = req.body;
@@ -100,14 +100,14 @@ const updateProgress = async (req, res) => {
       return res.status(404).json({ message: 'Enrollment not found' });
     }
 
-    // Check if the enrollment belongs to the current user
+
     if (enrollment.student.toString() !== req.userId) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
     enrollment.progress = progress;
 
-    // Mark as completed if progress is 100
+
     if (progress >= 100) {
       enrollment.status = 'completed';
       enrollment.completedAt = new Date();
@@ -126,7 +126,7 @@ const updateProgress = async (req, res) => {
   }
 };
 
-// Unenroll from course
+
 const unenrollCourse = async (req, res) => {
   try {
     const enrollment = await Enrollment.findById(req.params.id);
@@ -135,12 +135,12 @@ const unenrollCourse = async (req, res) => {
       return res.status(404).json({ message: 'Enrollment not found' });
     }
 
-    // Check if the enrollment belongs to the current user
+
     if (enrollment.student.toString() !== req.userId) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    // Remove student from course's enrolledStudents array
+
     await Course.findByIdAndUpdate(
       enrollment.course,
       { $pull: { enrolledStudents: req.userId } }
@@ -155,7 +155,7 @@ const unenrollCourse = async (req, res) => {
   }
 };
 
-// Check if student is enrolled in a course
+
 const checkEnrollment = async (req, res) => {
   try {
     const { courseId } = req.params;

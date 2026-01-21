@@ -4,7 +4,7 @@ const { body } = require('express-validator');
 const { register, login, getProfile } = require('../controllers/authController');
 const auth = require('../middleware/auth');
 
-// Validation rules
+
 const registerValidation = [
     body('username')
         .trim()
@@ -36,14 +36,13 @@ const loginValidation = [
         .withMessage('Password is required')
 ];
 
-// Routes
-// POST /api/auth/register - Register new user
+
 router.post('/register', ...registerValidation, register);
 
-// POST /api/auth/login - Login user
+
 router.post('/login', ...loginValidation, login);
 
-// GET /api/auth/profile - Get current user profile (Protected)
+
 router.get('/profile', auth, getProfile);
 
 module.exports = router;

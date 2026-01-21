@@ -2,7 +2,7 @@ const Course = require('../models/Course');
 const Enrollment = require('../models/Enrollment');
 const { validationResult } = require('express-validator');
 
-// Create new course (Instructor only)
+
 const createCourse = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -37,24 +37,24 @@ const createCourse = async (req, res) => {
     }
 };
 
-// Get all courses
+
 const getAllCourses = async (req, res) => {
     try {
         const { category, level, search } = req.query;
 
         let query = { isPublished: true };
 
-        // Filter by category
+
         if (category) {
             query.category = category;
         }
 
-        // Filter by level
+
         if (level) {
             query.level = level;
         }
 
-        // Search by title or description
+
         if (search) {
             query.$or = [
                 { title: { $regex: search, $options: 'i' } },
@@ -76,7 +76,7 @@ const getAllCourses = async (req, res) => {
     }
 };
 
-// Get single course by ID
+
 const getCourseById = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id)
@@ -93,7 +93,7 @@ const getCourseById = async (req, res) => {
     }
 };
 
-// Get courses created by instructor
+
 const getInstructorCourses = async (req, res) => {
     try {
         const courses = await Course.find({ instructor: req.userId })
@@ -110,7 +110,7 @@ const getInstructorCourses = async (req, res) => {
     }
 };
 
-// Update course (Instructor only - their own courses)
+
 const updateCourse = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
@@ -119,14 +119,14 @@ const updateCourse = async (req, res) => {
             return res.status(404).json({ message: 'Course not found' });
         }
 
-        // Check if user is the instructor of this course
+
         if (course.instructor.toString() !== req.userId) {
             return res.status(403).json({ message: 'You can only update your own courses' });
         }
 
         const { title, description, content, duration, level, category, price, thumbnail, isPublished } = req.body;
 
-        // Update fields
+
         if (title) course.title = title;
         if (description) course.description = description;
         if (content) course.content = content;
@@ -150,7 +150,7 @@ const updateCourse = async (req, res) => {
     }
 };
 
-// Delete course (Instructor only - their own courses)
+
 const deleteCourse = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
@@ -159,12 +159,12 @@ const deleteCourse = async (req, res) => {
             return res.status(404).json({ message: 'Course not found' });
         }
 
-        // Check if user is the instructor of this course
+
         if (course.instructor.toString() !== req.userId) {
             return res.status(403).json({ message: 'You can only delete your own courses' });
         }
 
-        // Delete all enrollments for this course
+
         await Enrollment.deleteMany({ course: req.params.id });
 
         await Course.findByIdAndDelete(req.params.id);
@@ -176,7 +176,6 @@ const deleteCourse = async (req, res) => {
     }
 };
 
-// Get enrolled students for a course (Instructor only)
 const getEnrolledStudents = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
@@ -185,7 +184,7 @@ const getEnrolledStudents = async (req, res) => {
             return res.status(404).json({ message: 'Course not found' });
         }
 
-        // Check if user is the instructor of this course
+
         if (course.instructor.toString() !== req.userId) {
             return res.status(403).json({ message: 'You can only view students of your own courses' });
         }

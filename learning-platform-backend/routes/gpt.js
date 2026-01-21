@@ -5,7 +5,7 @@ const { getRecommendations, chatWithGPT } = require('../controllers/gptControlle
 const auth = require('../middleware/auth');
 const { getApiRequestCount } = require('../utils/gptService');
 
-// Validation rules
+
 const recommendationValidation = [
     body('prompt')
         .trim()
@@ -22,15 +22,12 @@ const chatValidation = [
         .withMessage('Message is required')
 ];
 
-// Routes (require authentication)
 
-// POST /api/gpt/recommendations - Get course recommendations
 router.post('/recommendations', auth, recommendationValidation, getRecommendations);
 
-// POST /api/gpt/chat - Chat with GPT
 router.post('/chat', auth, chatValidation, chatWithGPT);
 
-// GET /api/gpt/usage - Get API usage statistics
+
 router.get('/usage', auth, (req, res) => {
     const usage = getApiRequestCount();
     res.status(200).json(usage);

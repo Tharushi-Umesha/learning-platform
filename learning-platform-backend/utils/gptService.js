@@ -1,30 +1,37 @@
 const OpenAI = require('openai');
 
-// Initialize OpenAI client
-const openai = new OpenAI({
+
+const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-// Track API request count
+
 let apiRequestCount = 0;
 const MAX_API_REQUESTS = 250;
 
-// Get course recommendations based on user prompt
+
 const getCourseRecommendations = async (userPrompt, availableCourses) => {
     try {
-        // Check API request limit
+
         if (apiRequestCount >= MAX_API_REQUESTS) {
             throw new Error('API request limit reached (250 requests)');
         }
 
-        // Format courses for GPT
+
         const coursesInfo = availableCourses.map((course, index) =>
             `${index + 1}. ${course.title} - ${course.description} (Level: ${course.level}, Category: ${course.category})`
         ).join('\n');
 
-        const systemPrompt = `You are a helpful course recommendation assistant for an online learning platform. 
-Based on the user's career goals or learning interests, recommend the most relevant courses from the available list.
-Provide your response in JSON format with the following structure:
+        const inputPrompt = `You are a helpful course recommendation assistant for an online learning platform.
+
+User's request: "${userPrompt}"
+
+Available courses:
+${coursesInfo}
+
+Based on the user's career goals or learning interests, recommend the top 3-5 most relevant courses from the available list above.
+
+Return ONLY a JSON object with this exact structure (no extra text):
 {
   "recommendations": [
     {
@@ -35,35 +42,29 @@ Provide your response in JSON format with the following structure:
   "explanation": "Brief explanation of the recommendation strategy"
 }`;
 
-        const userMessage = `User's request: "${userPrompt}"
 
-Available courses:
-${coursesInfo}
-
-Please recommend the top 3-5 most relevant courses with explanations.`;
-
-        // Make API call
         apiRequestCount++;
         console.log(`GPT API Request #${apiRequestCount} of ${MAX_API_REQUESTS}`);
 
-        const completion = await openai.chat.completions.create({
+        const completion = await client.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: userMessage }
+                { role: "user", content: inputPrompt }
             ],
             temperature: 0.7,
-            max_tokens: 500
+            max_tokens: 1000
         });
 
         const responseContent = completion.choices[0].message.content;
 
-        // Parse JSON response
+
         let parsedResponse;
         try {
-            parsedResponse = JSON.parse(responseContent);
+
+            const cleanContent = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            parsedResponse = JSON.parse(cleanContent);
         } catch (parseError) {
-            // If JSON parsing fails, create a structured response
+
             parsedResponse = {
                 recommendations: [{
                     courseTitle: "Multiple Courses",
@@ -80,10 +81,10 @@ Please recommend the top 3-5 most relevant courses with explanations.`;
     }
 };
 
-// General chat with GPT
+
 const getChatResponse = async (userMessage) => {
     try {
-        // Check API request limit
+
         if (apiRequestCount >= MAX_API_REQUESTS) {
             throw new Error('API request limit reached (250 requests)');
         }
@@ -91,7 +92,7 @@ const getChatResponse = async (userMessage) => {
         apiRequestCount++;
         console.log(`GPT API Request #${apiRequestCount} of ${MAX_API_REQUESTS}`);
 
-        const completion = await openai.chat.completions.create({
+        const completion = await client.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [
                 {
@@ -111,7 +112,7 @@ const getChatResponse = async (userMessage) => {
     }
 };
 
-// Get current API request count
+
 const getApiRequestCount = () => {
     return {
         count: apiRequestCount,

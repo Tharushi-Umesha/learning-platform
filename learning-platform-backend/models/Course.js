@@ -60,7 +60,7 @@ const courseSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Index for search
+
 courseSchema.index({ title: 'text', description: 'text', category: 'text' });
 
 module.exports = mongoose.model('Course', courseSchema);
