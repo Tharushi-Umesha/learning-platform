@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import gptService from '../services/gptService';
+import Loader from '../components/Loader';
 
 const Recommendations = () => {
     const [prompt, setPrompt] = useState('');
@@ -72,13 +73,21 @@ const Recommendations = () => {
                         placeholder="e.g., I want to be a software engineer, what courses should I follow?"
                         className="input-field min-h-32"
                         required
+                        disabled={loading}
                     />
                     <button
                         type="submit"
                         disabled={loading}
-                        className="btn-primary mt-4 disabled:opacity-50"
+                        className="btn-primary mt-4 disabled:opacity-50 inline-flex items-center gap-2"
                     >
-                        {loading ? 'Getting Recommendations...' : 'Get Recommendations'}
+                        {loading ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                <span>Getting Recommendations...</span>
+                            </>
+                        ) : (
+                            'Get Recommendations'
+                        )}
                     </button>
                 </form>
 
@@ -91,7 +100,8 @@ const Recommendations = () => {
                             <button
                                 key={index}
                                 onClick={() => setPrompt(example)}
-                                className="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors"
+                                disabled={loading}
+                                className="block w-full text-left px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-700 transition-colors disabled:opacity-50"
                             >
                                 {example}
                             </button>

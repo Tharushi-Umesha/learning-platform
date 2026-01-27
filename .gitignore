@@ -1,0 +1,36 @@
+# Dependencies
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+
+# Environment variables - ANYWHERE in project
+.env
+**/.env
+**/.env.local
+**/.env.*.local
+.env.development
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Build
+**/dist/
+**/build/
+
+# Backend specific
+learning-platform-backend/.env
+
+# Frontend specific  
+learning-platform-frontend/.env
